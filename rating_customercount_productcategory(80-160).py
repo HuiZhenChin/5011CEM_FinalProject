@@ -5,6 +5,7 @@ from matplotlib import cm
 from matplotlib.colors import Normalize
 from googletrans import Translator 
 import matplotlib.pyplot as plt 
+
 warnings.filterwarnings('ignore')
 
 # read the csv file
