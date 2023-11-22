@@ -3,6 +3,7 @@ import numpy as np
 import warnings 
 from matplotlib import cm
 from matplotlib.colors import Normalize
+from googletrans import Translator 
 import matplotlib.pyplot as plt 
 warnings.filterwarnings('ignore')
 
@@ -121,24 +122,27 @@ colors_reshaped = colors.reshape(1, -1, 4)
 colors_repeated = np.repeat(colors_reshaped, len(ratings), axis=1)
 
 # Plot the 3D bar graph
-bars = ax.bar3d(x.ravel(), y.ravel(), np.zeros_like(z).ravel(), dx, dy, z.ravel(), shade=True, color=colors_repeated[0])
+# Swap x and y in the bar3d function
+bars = ax.bar3d(y.ravel(), x.ravel(), np.zeros_like(z).ravel(), dy, dx, z.ravel(), shade=True, color=colors_repeated[0])
 
-ax.set_yticks(np.arange(len(filtered_categories)))
-ax.set_yticklabels(np.arange(0, 21, 1))
+# Update y-axis tick labels and labels
+ax.set_yticks(np.arange(len(ratings)))
+ax.set_yticklabels(ratings)
+ax.set_ylabel('Rating')
+
+# Update x-axis tick labels and labels
+ax.set_xticks(np.arange(len(filtered_categories)))
+ax.set_xticklabels(np.arange(0, 21, 1))
+ax.set_xlabel('Product Category')
 
 # set axis title
-ax.set_xticks(np.arange(len(ratings)))
-ax.set_xticklabels(ratings)
-ax.set_xlabel('Rating')
-ax.set_ylabel('Product Category')
 ax.set_zlabel('Customer Count')
-ax.set_title('3D Bar Graph of Customer Count (> 1000) by Rating and Product Category', fontsize=28) 
+ax.set_title('3D Bar Graph of Customer Count (> 1000) by Rating and Product Category', fontsize=28)
 
 legend_labels_with_numbers = [f"{i}: {category}" for i, category in enumerate(filtered_categories)]
 legend_handles = [plt.Rectangle((0, 0), 1, 1, color=cm.Blues(norm(i))) for i in range(len(filtered_categories))]
 ax.legend(legend_handles, legend_labels_with_numbers, loc='upper left', bbox_to_anchor=(1.05, 0.5, 0.1, 0.5), title='Product Categories')
 
-# Show the plot
 plt.show()
 
 # Calculate total customer count for each category
