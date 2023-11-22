@@ -53,7 +53,7 @@ merged_data = merged_data.merge(name, on="product_category_name", how="left")
 delivery_time_range = merged_data[(merged_data['day_difference'] >= 0) & (merged_data['day_difference'] <= 200)]
 count_of_order = len(delivery_time_range)
 
-# calculate how many order in each product category involved between 80 to 160 days
+# calculate how many order in each product category involved between all delivery days
 product_category_summary = delivery_time_range['product_category_name_english'].value_counts()
 # display a table
 category_summary_df = product_category_summary.reset_index()
@@ -62,7 +62,7 @@ category_summary_df.columns = ['Product Category', 'Count']
 # sort the DataFrame by the count of orders in descending order
 category_summary_df = category_summary_df.sort_values(by='Count', ascending=False)
 
-# select the top N product categories to include in the graph (20 product categories only based on the table shown)
+# select the top N product categories to include in the graph 
 top_categories = 72
 
 # Select the top N product categories to include in the graph
