@@ -3,7 +3,6 @@ import numpy as np
 import seaborn as sns 
 import warnings 
 import matplotlib.pyplot as plt 
-
 warnings.filterwarnings('ignore')
 
 # read the csv file
