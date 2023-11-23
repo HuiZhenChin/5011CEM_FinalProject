@@ -15,7 +15,6 @@ name= pd.read_csv("product_category_name_translation.csv")
 
 # time based analysis(based on delivery)
 # in terms of delivery time
-
 order.dropna(inplace=True)
 product.dropna(inplace=True)
 review['review_comment_title'].fillna("No Title", inplace=True)
@@ -67,16 +66,13 @@ top_categories = 72
 # select the top N product categories to include in the graph
 top_category_names = category_summary_df.iloc[:top_categories, 0].tolist()
 
-# input field
-product_name = "bed_bath_table"
-time_start = 0
-time_end = 200
+# create a numerical mapping for product category names
+category_mapping = {category: i for i, category in enumerate(top_category_names)}
 
-# filter the data for the selected top product category and the selected delivery time range
 filtered_data = merged_data[
     (merged_data['product_category_name_english'].isin(top_category_names)) &
-    (merged_data['day_difference'] >= time_start) &
-    (merged_data['day_difference'] <= time_end) 
+    (merged_data['day_difference'] >= 0) &
+    (merged_data['day_difference'] <= 200) 
 ]
 
 # create a column for review count
@@ -95,51 +91,60 @@ customer_count = pivot_table_customer_count.values
 product_categories = [str(category) for category in pivot_table_customer_count.index]
 ratings = [str(rating) for rating in pivot_table_customer_count.columns]
 
-product_data = filtered_data_no_duplicates[
-    filtered_data_no_duplicates['product_category_name_english'] == product_name
+# input field
+product_name = "health_beauty"
+time_start = 50
+time_end = 100
+
+# create a dataframe based on input data
+specific_category_data = filtered_data[
+    (filtered_data['product_category_name_english'] == product_name) &
+    (filtered_data['day_difference'] >= time_start) &
+    (filtered_data['day_difference'] <= time_end)
 ]
 
-# get the number of ratings and delivery times
-ratings_product = product_data['review_score'].unique()
-delivery_times_product = product_data['day_difference'].unique()
+# group by review score and delivery time, accumulate customer count
+specific_category_customer_count = specific_category_data.groupby(['review_score', 'day_difference']).size().reset_index(name='customer_count')
 
-# create meshgrid for 3D bar graph
-x_product, y_product = np.meshgrid(ratings_product, delivery_times_product)
-z_product = product_data.groupby(['review_score', 'day_difference'])['review_count'].sum().unstack(fill_value=0).values
-
-# set the bar width
-dx_product = dy_product = 0.8
-
-# set the graph size
-fig_product = plt.figure(figsize=(12, 8))
-ax_product = fig_product.add_subplot(111, projection='3d')
-
-# assign colors to each rating
-norm_product = Normalize(vmin=0, vmax=len(ratings_product))
-colors_product = cm.Blues(norm_product(np.arange(len(ratings_product))))
+# assign colors based on delivery time
+norm = Normalize(vmin=specific_category_customer_count['day_difference'].min(), vmax=specific_category_customer_count['day_difference'].max())
+colors = cm.GnBu(norm(specific_category_customer_count['day_difference']))
 
 # reshape colors to match the shape of z
-colors_reshaped_product = colors_product.reshape(1, -1, 4)
+colors_reshaped = colors.reshape(-1, 1, 4)  # Reshape to (num_colors, 1, 4)
 
 # repeat the color array for each bar in the plot
-colors_repeated_product = np.repeat(colors_reshaped_product, len(delivery_times_product), axis=1)
+colors_repeated = np.repeat(colors_reshaped, len(specific_category_customer_count['review_score']), axis=1)
 
-# plot the graph
-bars_product = ax_product.bar3d(
-    x_product.ravel(), 
-    y_product.ravel(), 
-    np.zeros_like(z_product).ravel(), 
-    dx_product, 
-    dy_product, 
-    z_product.ravel(), 
-    shade=True, 
-    color=colors_repeated_product[0]
-)
+# size of graph
+fig = plt.figure(figsize=(18, 15))
+ax = fig.add_subplot(111, projection='3d')
 
-# set the axis title
-ax_product.set_xlabel('Rating')
-ax_product.set_ylabel('Delivery Time')
-ax_product.set_zlabel('Customer Count')
-ax_product.set_title("3D Bar Graph of Customer Count for " + product_name + " Product Category by Rating and Delivery Time", fontsize=14)
+dx = dy = 1
+x = specific_category_customer_count['review_score']
+y = specific_category_customer_count['day_difference']
+z = specific_category_customer_count['customer_count']
+
+# plot graph
+bars = ax.bar3d(x, y, np.zeros_like(z), dx, dy, z, shade=True, color=colors_repeated[:, 0, :])
+
+# intervals for y-axis scaling
+if time_end - time_start <= 20:
+    y_interval = 1
+else:
+    y_interval = 10
+
+# set axis title
+ax.set_xticks(np.arange(1, len(ratings) + 1))  # Adjusted to start from 1
+ax.set_xticklabels(ratings)
+ax.set_xlabel('Rating')
+ax.set_yticks(np.arange(time_start, time_end + 1, y_interval))
+ax.set_ylabel('Delivery Time')
+ax.set_zlabel('Customer Count')
+ax.set_title(f'3D Bar Graph for {product_name} ({time_start} to {time_end} days)', fontsize= 26)
 
 plt.show()
+
+print("\nCustomer Count for Each Delivery Time for Each Rating:")
+print(specific_category_customer_count)
+
