@@ -47,11 +47,11 @@ merged_data_with_translation = product_category.merge(name, on='product_category
 
 merged_data = merged_data.merge(name, on="product_category_name", how="left")
 
-# analyze the review score from 80 days to 160 days of delivery time
+# analyze the review score from 0 days to 200 days of delivery time
 delivery_time_range = merged_data[(merged_data['day_difference'] >= 0) & (merged_data['day_difference'] <= 200)]
 count_of_order = len(delivery_time_range)
 
-# calculate how many order in each product category involved between 80 to 160 days
+# calculate how many order in each product category involved between 0 to 200 days
 product_category_summary = delivery_time_range['product_category_name_english'].value_counts()
 # display a table
 category_summary_df = product_category_summary.reset_index()
@@ -60,7 +60,7 @@ category_summary_df.columns = ['Product Category', 'Count']
 # sort the DataFrame by the count of orders in descending order
 category_summary_df = category_summary_df.sort_values(by='Count', ascending=False)
 
-# select the top N product categories to include in the graph (20 product categories only based on the table shown)
+# select all the categories 
 top_categories = 72
 
 # select the top N product categories to include in the graph
