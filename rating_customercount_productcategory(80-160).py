@@ -5,7 +5,6 @@ from matplotlib import cm
 from matplotlib.colors import Normalize
 from googletrans import Translator 
 import matplotlib.pyplot as plt 
-
 warnings.filterwarnings('ignore')
 
 # read the csv file
@@ -63,7 +62,7 @@ category_summary_df.columns = ['Product Category', 'Count']
 # sort the DataFrame by the count of orders in descending order
 category_summary_df = category_summary_df.sort_values(by='Count', ascending=False)
 
-# select the top N product categories to include in the graph (20 product categories only based on the table shown)
+# select the top N product categories to include in the graph 
 top_categories = 72
 
 # slect the top N product categories to include in the graph
@@ -138,7 +137,7 @@ ax.set_title('3D Bar Graph of Customer Count by Rating and Product Category (Del
 
 # set up legend
 legend_labels_with_numbers = [f"{i}: {category}" for i, category in enumerate(product_categories)]
-legend_handles = [plt.Rectangle((0, 0), 1, 1, color=cm.Blues(norm(i))) for i in range(len(product_categories))]
+legend_handles = [plt.Rectangle((0, 0), 1, 1, color=cm.GnBu(norm(i))) for i in range(len(product_categories))]
 ax.legend(legend_handles, legend_labels_with_numbers, loc='upper left', bbox_to_anchor=(1.05, 0.5, 0.1, 0.5),
           title='Product Categories')
 
@@ -150,3 +149,4 @@ total_customer_count = pivot_table_customer_count.loc[product_categories].sum(ax
 # display the total customer count as a pivot table
 print("\nTotal Customer Count by Product Category (Pivot Table):")
 print(total_customer_count.reset_index(name='Total Customer Count'))
+
