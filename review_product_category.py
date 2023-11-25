@@ -34,9 +34,9 @@ def assign_sentiment_label(comment):
     translated_comment = translate_to_english(comment)
     
     # check for specific negative keywords
-    negative_keywords = ['not arrived', "didn't like" ,'nothing', 'wrong', 'missing', 'lower','not received', 'delayed', 'late', 'theft', 'not come']
+    negative_keywords = ['not arrived', "unfortunately", "didn't like" ,'nothing', 'wrong', 'missing', 'lower','not received', 'delayed', 'late', 'theft', 'not come']
     
-    positive_keywords = ["on time", "before"]
+    positive_keywords = ["on time", "as agreed" ,"ahead ","before", "recommend", "trustworthy", "promised", "confidence", "well", "without problem", "10", "like", "less than 24 hours", "correct", "as advertised", "arrived in record time"]
     
     # convert the translated comment to lowercase for case-insensitive matching
     comment_lower = translated_comment.lower()
@@ -144,8 +144,8 @@ top_category_names = category_summary_df.iloc[:top_categories, 0].tolist()
 category_mapping = {category: i for i, category in enumerate(top_category_names)}
 
 # input field
-product_name = "health_beauty"
-selected_ratings = [5]
+product_name = "bed_bath_table"
+selected_ratings = [4]
 
 # filter the data for the selected top product categories and the selected delivery time range
 filtered_data = merged_data[
@@ -187,12 +187,17 @@ reviews_table = pd.DataFrame({'Rating': combined_ratings, 'Review Message': comb
 # filter out rows with "No Message"
 reviews_table = reviews_table[reviews_table['Review Message'] != "No Message"]
 
-# assign category label to each rating
 category_labels = []
 for index, row in reviews_table.iterrows():
     review = row['Review Message']
-    category_label = assign_category(review)
-    category_labels.append(category_label)
+    sentiment_label = row['Sentiment']
+    
+    # block the category label for positive reviews
+    if sentiment_label == 'positive':
+        category_labels.append('Positive')
+    else:
+        category_label = assign_category(review)
+        category_labels.append(category_label)
 
 # add the category column to the reviews_table DataFrame
 reviews_table['Category'] = category_labels
@@ -222,7 +227,7 @@ print(f"Combined Reviews table saved to '{combined_reviews_table_file_name}'")
 # plot the bar chart only if there are negative or neutral comments
 if len(filtered_reviews_table) > 0:
     category_counts = filtered_reviews_table['Category'].value_counts()
-
+    
     # colour for each category bar
     category_colors = {
         'Delivery Time': '#C1E3FA',
@@ -232,27 +237,39 @@ if len(filtered_reviews_table) > 0:
         'Other': '#9DA9B5'
     }
 
+    # create a DataFrame with all categories and their counts (filling with zeros where necessary)
+    all_categories = pd.DataFrame({'Category': category_colors.keys()})
+    all_categories_counts = category_counts.reset_index().rename(columns={'index': 'Category', 'Category': 'Count'})
+    all_categories = pd.merge(all_categories, all_categories_counts, on='Category', how='left').fillna(0)
+    
+    # sort the DataFrame by the count of orders in descending order
+    all_categories = all_categories.sort_values(by='Count', ascending=False)
+    
+    # select the top N categories to include in the graph
+    top_categories = 5
+    top_categories_df = all_categories.head(top_categories)
+    
     # plot bar chart
     plt.figure(figsize=(13, 8))
-    ax = category_counts.plot(kind='bar', color=[category_colors[category] for category in category_counts.index])
-  
+    ax = top_categories_df.plot(kind='bar', x='Category', y='Count', color=[category_colors[category] for category in top_categories_df['Category']])
+    
     # set title
     plt.title(f'Category Counts of Ratings {selected_ratings} for {product_name}')
     plt.xlabel('Review Comment Category')
-    ax.set_xticklabels(ax.get_xticklabels(), rotation=360, ha='center')
+    ax.set_xticklabels(ax.get_xticklabels(), rotation=360, ha='center', fontsize="8")
     plt.ylabel('Count')
-
+    
     # display the count values on top of each bar
-    for i, count in enumerate(category_counts):
-        plt.text(i, count + 0.1, str(count), ha='center')
-
+    for i, count in enumerate(top_categories_df['Count']):
+        plt.text(i, count + 0.1, str(int(count)), ha='center', fontsize="8")
+    
     # create legend handles and labels
-    legend_handles = [Line2D([0], [0], marker='o', color='w', markerfacecolor=category_colors[category], markersize=10) for category in category_counts.index]
-    legend_labels = category_counts.index
-
+    legend_handles = [Line2D([0], [0], marker='o', color='w', markerfacecolor=category_colors[category], markersize=8) for category in top_categories_df['Category']]
+    legend_labels = top_categories_df['Category']
+    
     # display the legend outside the plot
-    ax.legend(legend_handles, legend_labels, title='Category Counts', title_fontsize='12', bbox_to_anchor=(1.05, 1), loc='upper left')
-
+    ax.legend(legend_handles, legend_labels, title='Category Counts', title_fontsize='8', bbox_to_anchor=(1.05, 1), loc='upper left',  fontsize='8')
+    
     plt.show()
 
 # display the table only if there are positive comments
