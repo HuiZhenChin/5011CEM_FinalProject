@@ -62,7 +62,7 @@ category_summary_df.columns = ['Product Category', 'Count']
 # sort the DataFrame by the count of orders in descending order
 category_summary_df = category_summary_df.sort_values(by='Count', ascending=False)
 
-# select the top N product categories to include in the graph 
+# select the top N product categories to include in the graph (20 product categories only based on the table shown)
 top_categories = 72
 
 # slect the top N product categories to include in the graph
@@ -149,4 +149,36 @@ total_customer_count = pivot_table_customer_count.loc[product_categories].sum(ax
 # display the total customer count as a pivot table
 print("\nTotal Customer Count by Product Category (Pivot Table):")
 print(total_customer_count.reset_index(name='Total Customer Count'))
+
+# create a new DataFrame to store customer count for each product in different ratings
+product_rating_count = pd.DataFrame(columns=['Product Name', 'Rating 1', 'Rating 2', 'Rating 3', 'Rating 4', 'Rating 5'])
+
+# iterate through each product category
+for product_category in top_category_names:
+    # Filter data for the current product category
+    product_data = filtered_data_no_duplicates[filtered_data_no_duplicates['product_category_name_english'] == product_category]
+
+    # calculate customer count for each rating
+    rating_counts = product_data['review_score'].value_counts().sort_index()
+
+    # create a dictionary to store the information
+    product_info = {
+        'Product Name': product_category,
+        'Rating 1': rating_counts.get(1, 0),
+        'Rating 2': rating_counts.get(2, 0),
+        'Rating 3': rating_counts.get(3, 0),
+        'Rating 4': rating_counts.get(4, 0),
+        'Rating 5': rating_counts.get(5, 0)
+    }
+
+    # append the information to the DataFrame
+    product_rating_count = product_rating_count.append(product_info, ignore_index=True)
+
+# display the separate customer count of each product in different ratings
+print("\nSeparate Customer Count of Each Product in Different Ratings:")
+print(product_rating_count)
+output_file_path = 'customer_count_results.txt'
+product_rating_count.to_csv(output_file_path, index=False, sep='\t')
+
+print(f"\nResults saved to: {output_file_path}")
 
