@@ -92,9 +92,9 @@ product_categories = [str(category) for category in pivot_table_customer_count.i
 ratings = [str(rating) for rating in pivot_table_customer_count.columns]
 
 # input field
-product_name = "health_beauty"
-time_start = 50
-time_end = 100
+product_name = "computers_accessories"
+time_start = 20
+time_end = 80
 
 # create a dataframe based on input data
 specific_category_data = filtered_data[
@@ -116,35 +116,44 @@ colors_reshaped = colors.reshape(-1, 1, 4)  # Reshape to (num_colors, 1, 4)
 # repeat the color array for each bar in the plot
 colors_repeated = np.repeat(colors_reshaped, len(specific_category_customer_count['review_score']), axis=1)
 
-# size of graph
-fig = plt.figure(figsize=(18, 15))
-ax = fig.add_subplot(111, projection='3d')
+if len(specific_category_data) > 0:
+    # size of graph
+    fig = plt.figure(figsize=(18, 15))
+    ax = fig.add_subplot(111, projection='3d')
+    
+    dx = dy = 1
+    x = specific_category_customer_count['review_score']
+    y = specific_category_customer_count['day_difference']
+    z = specific_category_customer_count['customer_count']
+    
+    # plot graph
+    bars = ax.bar3d(x, y, np.zeros_like(z), dx, dy, z, shade=True, color=colors_repeated[:, 0, :])
+    
+    # intervals for y-axis scaling
+    if time_end - time_start <= 20:
+        y_interval = 1
+    else:
+        y_interval = 10
+    
+    # set axis title
+    ax.set_xticks(np.arange(1, len(ratings) + 1))  # Adjusted to start from 1
+    ax.set_xticklabels(ratings)
+    ax.set_xlabel('Rating')
+    ax.set_yticks(np.arange(time_start, time_end + 1, y_interval))
+    ax.set_ylabel('Delivery Time')
+    ax.set_zlabel('Customer Count')
+    ax.set_title(f'3D Bar Graph for {product_name} ({time_start} to {time_end} days)', fontsize= 26)
+    
+    plt.show()
+    
+    print("\nCustomer Count for Each Delivery Time for Each Rating:")
+    print(specific_category_customer_count)
 
-dx = dy = 1
-x = specific_category_customer_count['review_score']
-y = specific_category_customer_count['day_difference']
-z = specific_category_customer_count['customer_count']
-
-# plot graph
-bars = ax.bar3d(x, y, np.zeros_like(z), dx, dy, z, shade=True, color=colors_repeated[:, 0, :])
-
-# intervals for y-axis scaling
-if time_end - time_start <= 20:
-    y_interval = 1
-else:
-    y_interval = 10
-
-# set axis title
-ax.set_xticks(np.arange(1, len(ratings) + 1))  # Adjusted to start from 1
-ax.set_xticklabels(ratings)
-ax.set_xlabel('Rating')
-ax.set_yticks(np.arange(time_start, time_end + 1, y_interval))
-ax.set_ylabel('Delivery Time')
-ax.set_zlabel('Customer Count')
-ax.set_title(f'3D Bar Graph for {product_name} ({time_start} to {time_end} days)', fontsize= 26)
-
-plt.show()
-
-print("\nCustomer Count for Each Delivery Time for Each Rating:")
-print(specific_category_customer_count)
-
+elif len(specific_category_data) == 0:
+    fig, ax = plt.subplots(figsize=(10, 8))
+    ax.axis('off')  
+    
+    num_rows = 1
+    plt.title(f'3D Bar Graph for {product_name} ({time_start} to {time_end} days)', fontsize=16, fontweight='bold', x=0.5)
+    ax.text(0.5, 0.5, 'No orders within these days', ha='center', va='center', fontsize=16, color='black')
+    plt.show()
