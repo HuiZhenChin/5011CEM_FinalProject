@@ -18,3 +18,4 @@ Program Files:
   6. rating_specific_product_category.py: show the customer count of the specific product category based on the selected delivery time (3D Bar Graph)
   7. review_product_category.py: display the review comment for a specific product category based on the user input + display the category of issues faced by the customers (Bar Chart + Table Graph)
   8. sales_predict_next_month.py: predict the sales trend in the next month (Line Graph)
+  9. behaviour analysis.py: show the payment method used by the customers for a specific product category
