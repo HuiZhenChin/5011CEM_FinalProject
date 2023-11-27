@@ -6,8 +6,6 @@ Group Members:
 3. PehJiaXuan - Peh Jia Xuan
 4. 101wizard - Tan Jia Quan
 
-Data Preprocessing- taken from the 5011CEM_Project Repository (Individual Progress Report)
-
 Program Files:
 - Dashboard.py (Project Olist Dashboard)
 - Descriptive Statistics
