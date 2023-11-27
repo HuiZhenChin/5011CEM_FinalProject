@@ -57,32 +57,30 @@ plt.title('Products by Rating')
 
 plt.show()
 
-# Round down the review scores to the nearest integer
+# round down the review scores to the nearest integer
 merged_data_with_translation['rounded_review_score'] = merged_data_with_translation['review_score'].apply(lambda x: int(x))
 
-# Group the data by the rounded review score and count the number of product categories
+# group the data by the rounded review score and count the number of product categories
 count_by_rounded_score = merged_data_with_translation.groupby('rounded_review_score')['product_category_name'].count().reset_index()
 
-# Rename the columns for clarity
+# rename the columns
 count_by_rounded_score = count_by_rounded_score.rename(columns={'rounded_review_score': 'Rounded Review Score', 'product_category_name': 'Count of Categories'})
 
-# Show the count of product categories for each rounded-down rating score
+# show the count of product categories for each rounded-down rating score
 print("Count of Product Categories for Rounded-Down Rating Scores:")
 print(count_by_rounded_score)
 
-# Filter the data for rounded-down rating scores of 2 and 3
+# filter the data for rounded-down rating scores of 2 and 3
 categories_with_score_2 = merged_data_with_translation[merged_data_with_translation['rounded_review_score'] == 2]
 categories_with_score_3 = merged_data_with_translation[merged_data_with_translation['rounded_review_score'] == 3]
 
-# Display the categories for rounded-down rating score of 2
+# display the categories for rounded-down rating score of 2
 print("Categories with Rounded-Down Rating Score of 2:")
 print(categories_with_score_2['product_category_name_english'])
 
-# Display the categories for rounded-down rating score of 3
+# display the categories for rounded-down rating score of 3
 print("Categories with Rounded-Down Rating Score of 3:")
 print(categories_with_score_3['product_category_name_english'])
-
-
 
 
 # finding: cds_dvds_musicals has highest rating score, security_and_services has lowest rating score
