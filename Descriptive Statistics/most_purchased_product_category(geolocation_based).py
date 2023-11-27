@@ -93,37 +93,6 @@ for state, info in state_info.items():
 
 print("State-specific orders saved to the 'States' folder.")
 
-# check if any customer has more than one order in a state file
-# get all CSV files in the directory
-files = [file for file in os.listdir(state_directory) if file.startswith('orders_for_') and file.endswith('.csv')]
-
-# initialize a list to store customer IDs with two order IDs for each state
-customer_ids_with_two_orders = []
-
-# loop through each state CSV file
-for state_file in files:
-    # read the CSV file for the current state
-    state_orders = pd.read_csv(state_file)
-    
-    # group the orders by customer ID and count the number of orders for each customer
-    customer_order_counts = state_orders['order_id'].groupby(state_orders['customer_id']).count()
-    
-    # filter customer IDs with two order IDs
-    customer_ids_with_two_orders_state = customer_order_counts[customer_order_counts > 2].index.tolist()
-    
-    # append the results to the list
-    customer_ids_with_two_orders.append((state_file, customer_ids_with_two_orders_state))
-
-# print the results for each state
-# result: No customer has two or more orders in a state
-for state_file, customer_ids in customer_ids_with_two_orders:
-    print(f"State: {state_file[len('orders_for_'): -len('.csv')]}")
-    if customer_ids:
-        print(f"Customer IDs with two or more orders: {customer_ids}")
-    else:
-        print("No customer IDs with two or more orders in this state.")
-    print()
-
 # storing Product ID of each Order ID into a file
 # directory to save the data (Order Item ID and Product ID) CSV files
 data_directory = 'ProductIDs'
