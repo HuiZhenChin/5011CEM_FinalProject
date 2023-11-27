@@ -36,7 +36,7 @@ def assign_sentiment_label(comment):
     # check for specific negative keywords
     negative_keywords = ['not arrived', "unfortunately", "didn't like" ,'nothing', 'wrong', 'missing', 'lower','not received', 'delayed', 'late', 'theft', 'not come']
     
-    positive_keywords = ["on time", "as agreed" ,"ahead ","before", "recommend", "trustworthy", "promised", "confidence", "well", "without problem", "10", "like", "less than 24 hours", "correct", "as advertised", "arrived in record time"]
+    positive_keywords = ["on time", "earlier", "faster","on schedule" ,"as agreed" ,"ahead ","before", "recommend", "trustworthy", "promised", "confidence", "well", "without problem", "10", "like", "less than 24 hours", "correct", "as advertised", "arrived in record time"]
     
     # convert the translated comment to lowercase for case-insensitive matching
     comment_lower = translated_comment.lower()
@@ -145,7 +145,7 @@ category_mapping = {category: i for i, category in enumerate(top_category_names)
 
 # input field
 product_name = "bed_bath_table"
-selected_ratings = [4]
+selected_ratings = [1]
 
 # filter the data for the selected top product categories and the selected delivery time range
 filtered_data = merged_data[
@@ -185,7 +185,7 @@ for rating_value in selected_ratings:
 reviews_table = pd.DataFrame({'Rating': combined_ratings, 'Review Message': combined_reviews, 'Sentiment': sentiment_labels})
 
 # filter out rows with "No Message"
-reviews_table = reviews_table[reviews_table['Review Message'] != "No Message"]
+reviews_table = reviews_table[reviews_table['Review Message'] != "No Message"] 
 
 category_labels = []
 for index, row in reviews_table.iterrows():
@@ -212,17 +212,17 @@ filtered_reviews_table = reviews_table[reviews_table['Sentiment'].isin(['negativ
 positive_reviews_table = reviews_table[reviews_table['Sentiment'] == 'positive']
 
 # if there is no negative and neutral reviews, show the positive reviews
-if len(filtered_reviews_table) == 0:
-    filtered_reviews_table = positive_reviews_table
+
+positive_reviews_table = positive_reviews_table.drop(['Sentiment', 'Category'], axis=1)
 
 # combine positive and filtered reviews into a single table
 combined_reviews_table = pd.concat([filtered_reviews_table, positive_reviews_table])
-combined_reviews_table = combined_reviews_table.drop(['Sentiment', 'Category'], axis=1)
 
-# save the combined reviews table (positive and filtered) to a text file
-combined_reviews_table_file_name = f'{product_name}_combined_reviews_table.txt'
-combined_reviews_table.to_csv(combined_reviews_table_file_name, index=False, sep='\t')
-print(f"Combined Reviews table saved to '{combined_reviews_table_file_name}'")
+if len(filtered_reviews_table) > 0 or len(positive_reviews_table) > 0:
+    # save the combined reviews table (positive and filtered) to a text file
+    combined_reviews_table_file_name = f'{product_name}_combined_reviews_table.txt'
+    combined_reviews_table.to_csv(combined_reviews_table_file_name, index=False, sep='\t')
+    print(f"Combined Reviews table saved to '{combined_reviews_table_file_name}'")
 
 # plot the bar chart only if there are negative or neutral comments
 if len(filtered_reviews_table) > 0:
