@@ -3,6 +3,7 @@ import numpy as np
 import seaborn as sns 
 import warnings 
 import matplotlib.pyplot as plt 
+
 warnings.filterwarnings('ignore')
 
 # read the csv file
@@ -51,8 +52,8 @@ merged_data = merged_data.merge(name, on="product_category_name", how="left")
 # plot a heatmap
 plt.figure(figsize=(12, 6))
 sns.heatmap(pivot_table, cmap='YlGnBu', annot=True, fmt=".1f", cbar_kws={'label': 'Average Rating'})
-plt.xlabel('Delivery Time (Days)')
-plt.ylabel('Rating Score')
+plt.xlabel('Rating Score')
+plt.ylabel('Delivery Time (Days)')
 plt.title('Heatmap of Average Rating by Delivery Time in Olist')
 plt.show()
 
@@ -60,6 +61,6 @@ plt.show()
 correlation = merge_data['day_difference'].corr(merge_data['review_score'])
 print("Correlation between Delivery Time and Rating Score:", correlation)
 
-# Correlation between Delivery Time and Rating Score: -0.2984135695972441
+# Correlation between Delivery Time and Rating Score: -0.26726377054097505
 # Conclusion: not extremely strong relationship between these two variables
 
