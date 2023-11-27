@@ -7,7 +7,7 @@ Group Members:
 4. 101wizard - Tan Jia Quan
 
 Program Files:
-- Dashboard.py (Project Olist Dashboard)
+- dashboard.py (Project Olist Dashboard)
 - Descriptive Statistics
   
   1. rating_customercount_productcategory(0-200).py: show the customer count of ratings for different product category from 0 to 200 delivery days (all the time) (3D Bar Graph)
