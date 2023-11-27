@@ -238,10 +238,16 @@ if len(filtered_reviews_table) > 0:
     }
 
     # create a DataFrame with all categories and their counts (filling with zeros where necessary)
-    all_categories = pd.DataFrame({'Category': category_colors.keys()})
-    all_categories_counts = category_counts.reset_index().rename(columns={'index': 'Category', 'Category': 'Count'})
-    all_categories = pd.merge(all_categories, all_categories_counts, on='Category', how='left').fillna(0)
-    
+    all_categories = pd.DataFrame({'Category': list(category_colors.keys())})
+    # rename Category to Category
+    all_categories_counts = category_counts.reset_index().rename(
+        columns={'index': 'Category', 'Category': 'Category'})
+    # rename the 'count' column to 'Count'
+    all_categories_counts = all_categories_counts.rename(columns={'count': 'Count'})
+
+    # merge the DataFrames for 'all_categories' and 'all_categories_counts' on 'Category'
+    all_categories = pd.merge(all_categories, all_categories_counts.reset_index(), on='Category',
+                              how='left').fillna(0)
     # sort the DataFrame by the count of orders in descending order
     all_categories = all_categories.sort_values(by='Count', ascending=False)
     
