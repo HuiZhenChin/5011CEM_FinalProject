@@ -19,6 +19,6 @@ Program Files:
   7. review_product_category.py: display the review comment for a specific product category based on the user input + display the category of issues faced by the customers (Bar Chart + Table Graph)
   8. sales_predict_next_month.py: predict the sales trend in the next month (Line Graph)
   9. behaviour analysis.py: show the payment method used by the customers for a specific product category
- 10. most_purchased_product_category(geolocation_based and time_based).py: show the most purchased product category for a specific time inputted
- 11. most_purchased_product_category(geolocation_based).py: show the overall most purchased product category
- 12. most_purchased_product_category(time_based).py: show the monthly most purchased product category
+  10. most_purchased_product_category(geolocation_based and time_based).py: show the most purchased product category for a specific time inputted
+  11. most_purchased_product_category(geolocation_based).py: show the overall most purchased product category
+  12. most_purchased_product_category(time_based).py: show the monthly most purchased product category
