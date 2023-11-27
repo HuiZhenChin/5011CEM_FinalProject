@@ -109,47 +109,6 @@ for i, rating in enumerate(x_values):
 # create a numerical mapping for product category names
 category_mapping = {category: i for i, category in enumerate(top_category_names)}
 
-# assign unique number representation to each product category
-# for example:
-# 1  furniture
-# 2  baby
-y_numerical = np.arange(len(top_category_names))
-
-# create meshgrid for x and y
-x, y = np.meshgrid(x_values, y_numerical)
-
-# ensure z has the same dimensions as x and y
-z = customer_count_by_rating[:len(x), :len(y)]
-
-# bar width
-dx = dy = 0.5  
-dz = z
-
-ax.bar3d(x.ravel(), y.ravel(), np.zeros_like(z).ravel(), dx, dy, dz.ravel(), shade=True)
-
-# set up the graph
-ax.set_xlabel("Rating")
-ax.set_xlim(0.5, 5.5)
-ax.set_xticks(np.arange(1, 6, 1))
-ax.set_yticks(np.arange(0, 20, 1))
-
-# set the label of axis
-ax.set_ylabel("Product Category Number")
-ax.set_zlabel("Customer Count")
-
-# bar graph title
-ax.set_title("3D Bar Graph of Customer Count by Rating and Product Category")
-
-# create a legend to show number representation for each product category
-legend_labels = [f"{category_mapping[cat]}: {cat}" for cat in top_category_names]
-
-legend_plot = [ax.bar3d(0, 0, 0, 0, 0, 0, color='white', label=label) for label in legend_labels]
-
-# display the legend with adjusted position
-ax.legend(legend_labels, loc='upper left', bbox_to_anchor=(1.05, 0.5), title='Product Categories')
-
-plt.show()
-
 combined_reviews = []
 combined_ratings = []
 
