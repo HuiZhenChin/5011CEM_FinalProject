@@ -181,4 +181,3 @@ output_file_path = 'customer_count_results.txt'
 product_rating_count.to_csv(output_file_path, index=False, sep='\t')
 
 print(f"\nResults saved to: {output_file_path}")
-
